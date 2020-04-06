@@ -19,7 +19,7 @@ namespace DK.OM.Bhav.Data
         //    string defaultName = "Deepak";
         //    return "Hello " + s ?? defaultName;
         //}
-        public async Task<IEnumerable<BhavStocks>> GetStocksAsync()
+        public async Task<IEnumerable<BhavBSEStocks>> GetStocksAsync()
         {
             try
             {
@@ -32,13 +32,13 @@ namespace DK.OM.Bhav.Data
                 throw;
             }
         }
-        public async Task<BhavStocks> GetBSEStockAsync(string BSECode)
+        public async Task<BhavBSEStocks> GetBSEStockAsync(string BSECode)
         {
             var quary = await _ctx.Stocks
                 .Where(x => x.BSECode == BSECode).FirstOrDefaultAsync();
             return quary;
         }
-        public async Task<int> AddBSEStockAsync(BhavStocks BSEStock)
+        public async Task<int> AddBSEStockAsync(BhavBSEStocks BSEStock)
         {
             var result = -1;
             try
@@ -59,7 +59,7 @@ namespace DK.OM.Bhav.Data
         public async Task AddNewBSEStockesAsync(List<BSEDownloadCSVType> bseCSVTypes)
         {
             var dbStocks = await GetStocksAsync();
-            var bseStocks = new List<BhavStocks>();
+            var bseStocks = new List<BhavBSEStocks>();
             try
             {
                 foreach (var bseItem in bseCSVTypes.Where(e => e.SC_TYPE == "Q"))
@@ -67,7 +67,7 @@ namespace DK.OM.Bhav.Data
                     var isExist = dbStocks.Any(e => e.BSECode.Contains(bseItem.SC_CODE.ToString()));
                     if (!isExist)
                     {
-                        var newStock = new BhavStocks
+                        var newStock = new BhavBSEStocks
                         {
                             BSECode = bseItem.SC_CODE.ToString(),
                             StockName = bseItem.SC_NAME.Trim(),
@@ -110,7 +110,7 @@ namespace DK.OM.Bhav.Data
             //TODO: Not completed yet, need to change the approach probably, may be add add nse in sperate table and line bse-nse stocks with another table
             var dbStocks = await GetStocksAsync();
             var bseStocks = dbStocks.Select(e => e.StockName).ToList();
-            var nseStocks = new List<BhavStocks>();
+            var nseStocks = new List<BhavBSEStocks>();
             try
             {
                 foreach (var nseItem in nseCSVTypes.GroupBy(p => p.SYMBOL))
@@ -157,7 +157,7 @@ namespace DK.OM.Bhav.Data
 
         }
 
-        public async Task<bool> BulkNewExpensesAsync(List<BhavStocks> BSEStocks)
+        public async Task<bool> BulkNewExpensesAsync(List<BhavBSEStocks> BSEStocks)
         {
             bool vReturn = false;
             if (BSEStocks != null)

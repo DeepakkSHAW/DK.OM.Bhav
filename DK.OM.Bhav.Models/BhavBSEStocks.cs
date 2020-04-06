@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DK.OM.Bhav.Models
 {
-    public class BhavStocks
+    public class BhavBSEStocks
     {
         public int Id { get; set; }
         public string StockName { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DK.OM.Bhav.Models
 {
-    public class BhavStockPrices
+    public class BhavBSEStockPrices
     {
         public int Id { get; set; }
         public int BhavStockId { get; set; }
@@ -17,6 +17,6 @@ namespace DK.OM.Bhav.Models
         public DateTime OnDate { get; private set; } = DateTime.Now;
 
         //Navigation properties
-        public IEnumerable<BhavStocks> BhavStocks { get; set; }
+        public IEnumerable<BhavBSEStocks> BhavStocks { get; set; }
     }
 }

@@ -9,8 +9,8 @@ namespace DK.OM.Bhav.Data
 {
     public class BhavDataContext : DbContext
     {
-        public DbSet<BhavStocks> Stocks { get; set; }
-        public DbSet<BhavStockPrices> Prices { get; set; }
+        public DbSet<BhavBSEStocks> Stocks { get; set; }
+        public DbSet<BhavBSEStockPrices> Prices { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var dbConnection = string.Empty;
