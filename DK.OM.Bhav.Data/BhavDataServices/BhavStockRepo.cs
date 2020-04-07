@@ -19,11 +19,11 @@ namespace DK.OM.Bhav.Data
         //    string defaultName = "Deepak";
         //    return "Hello " + s ?? defaultName;
         //}
-        public async Task<IEnumerable<BhavBSEStocks>> GetStocksAsync()
+        public async Task<IEnumerable<BhavBSEStocks>> GetBSEStockAsync()
         {
             try
             {
-                var quary = from c in _ctx.Stocks select c;
+                var quary = from c in _ctx.BSEStocks select c;
                 return await quary.ToListAsync();
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace DK.OM.Bhav.Data
         }
         public async Task<BhavBSEStocks> GetBSEStockAsync(string BSECode)
         {
-            var quary = await _ctx.Stocks
+            var quary = await _ctx.BSEStocks
                 .Where(x => x.BSECode == BSECode).FirstOrDefaultAsync();
             return quary;
         }
@@ -58,7 +58,7 @@ namespace DK.OM.Bhav.Data
         }
         public async Task AddNewBSEStockesAsync(List<BSEDownloadCSVType> bseCSVTypes)
         {
-            var dbStocks = await GetStocksAsync();
+            var dbStocks = await GetBSEStockAsync();
             var bseStocks = new List<BhavBSEStocks>();
             try
             {
@@ -67,48 +67,88 @@ namespace DK.OM.Bhav.Data
                     var isExist = dbStocks.Any(e => e.BSECode.Contains(bseItem.SC_CODE.ToString()));
                     if (!isExist)
                     {
-                        var newStock = new BhavBSEStocks
-                        {
-                            BSECode = bseItem.SC_CODE.ToString(),
-                            StockName = bseItem.SC_NAME.Trim(),
-                            StockGroup = bseItem.SC_GROUP.Trim(),
-                            StockType = "Q"
-                        };
-                        bseStocks.Add(newStock); //needed for Bulk Insert, if we use can it.
                         try
                         {
-                            await AddBSEStockAsync(newStock);
+                            var newStock = new BhavBSEStocks
+                            {
+                                BSECode = bseItem.SC_CODE.ToString(),
+                                StockName = bseItem.SC_NAME.Trim(),
+                                StockGroup = bseItem.SC_GROUP.Trim(),
+                                StockType = "Q"
+                            };
+                            bseStocks.Add(newStock); //needed for Bulk Insert, if we use can it.
+                            _ctx.Add(newStock);
+                            //await AddBSEStockAsync(newStock);
                         }
                         catch (Exception ex)
                         {
-                            //Log if any exception and continue
+                            //TODO: Keep continue operation, Log if any exception and continue
                             System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
-                            throw;
                         }
                     }
                 }
                 //Ready to Bulk Insert of new stocks
-                System.Diagnostics.Debug.WriteLine($"Number of new stocks Added: {bseStocks.Count()}");
-                //if (bseStocks.Count() > 0)
-                //{
-                //    await BulkNewExpensesAsync(bseStocks);
-                //}
-                //else
-                //    System.Diagnostics.Debug.WriteLine($"No new stocks found, could {bseStocks.Count()}");
+                var result = await _ctx.SaveChangesAsync();
+                System.Diagnostics.Debug.WriteLine($"Number of new stocks Added: {bseStocks.Count()} After DB Operation affected rows{result}");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                //Log if any exception and continue
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
                 throw;
             }
         }
-        public async Task AddLatestBSEStockPrice(List<BSEDownloadCSVType> bseCSVTypes)
+        public async Task AddLatestBSEStockPrice(List<BSEDownloadCSVType> bseCSVTypes, DateTime dt)
         {
-
+            var bseStocksPrice = new List<BhavBSEStockPrices>();
+            double lturnover;
+            try
+            {
+                var dbBSEStocks = await GetBSEStockAsync();
+                var bseStocks = new List<BhavBSEStocks>();
+                foreach (var dbBSEStock in dbBSEStocks)
+                {
+                    try
+                    {
+                        var csvBSEStock = bseCSVTypes.Where(e => e.SC_CODE.ToString() == dbBSEStock.BSECode.Trim()).SingleOrDefault();
+                        if (csvBSEStock != null)
+                        {
+                            var bseStockPrice = new BhavBSEStockPrices
+                            {
+                                BhavBSEStockId = dbBSEStock.Id,
+                                Open = csvBSEStock.OPEN,
+                                High = csvBSEStock.HIGH,
+                                Low = csvBSEStock.LOW,
+                                Close = csvBSEStock.CLOSE,
+                                Last = csvBSEStock.LAST, //*Ref TryParse with default value
+                                PreClose = csvBSEStock.PREVCLOSE,
+                                Turnover = (long)(double.TryParse(csvBSEStock.NET_TURNOV, out lturnover) ? lturnover : 0),
+                                OnDate = new DateTime(dt.Year, dt.Month, dt.Day)
+                            };
+                            bseStocksPrice.Add(bseStockPrice);
+                            _ctx.Add(bseStockPrice);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //TODO: Keep continue operation, Log if any exception and continue
+                        System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                    }
+                }
+                var result = await _ctx.SaveChangesAsync();
+                System.Diagnostics.Debug.WriteLine($"Total Stock Price Added: {bseStocksPrice.Count()}");
+            }
+            catch (Exception ex)
+            {
+                //Log if any exception and continue
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
         }
         public async Task AddNewNSEStockesAsync(List<NSEDownloadCSVType> nseCSVTypes, bool isInBSE)
         {
             //TODO: Not completed yet, need to change the approach probably, may be add add nse in sperate table and line bse-nse stocks with another table
-            var dbStocks = await GetStocksAsync();
+            var dbStocks = await GetBSEStockAsync();
             var bseStocks = dbStocks.Select(e => e.StockName).ToList();
             var nseStocks = new List<BhavBSEStocks>();
             try
@@ -118,7 +158,8 @@ namespace DK.OM.Bhav.Data
                     var theKey = nseItem.Key.Trim().ToUpper();
                     //theKey = "E2E";
                     //var v = dbStocks.Any(e => e.NSECode == "NCC");
-                    var isExist = dbStocks.Any(e => e.NSECode==theKey); //Check if its already in DB
+                    // var isExist = dbStocks.Any(e => e.NSECode==theKey); //Check if its already in DB
+                    var isExist = false;
                     if (!isExist)
                     {
                         if (isInBSE)

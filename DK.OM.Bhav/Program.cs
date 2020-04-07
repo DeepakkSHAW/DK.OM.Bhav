@@ -27,19 +27,10 @@ namespace DK.OM.Bhav
         static async Task Main(string[] args)
         {
             Console.WriteLine("Bhav Copy Download");
+            DateTime dtOperation = new DateTime(2020, 04, 3);
             try
             {
                 BhavStockRepo bhavStockSrv = new BhavStockRepo();
-
-                //var item = new BhavStocks
-                //{
-                //    BSECode = "1234",
-                //    StockName = "ABB",
-                //    StockGroup = "Y",
-                //    StockType = "Q"
-                //};
-                //await bhavStockSrv.AddBSEStockAsync(item);
-
 
                 //---------Configuration---------------//
                 //string dbConn = configuration.GetSection("Position").GetSection("Title").Value;
@@ -57,12 +48,15 @@ namespace DK.OM.Bhav
                 //--------------------------------------------//
 
                 //-------FOR BSE Stocks---------//
-                var csvBSE = DownloadFromBSE();
+                var csvBSE = DownloadFromBSE(dtOperation);
                 Console.WriteLine($"BSE Downloaded Stock Count: {csvBSE.Count()}");
                 //Add new stock new stock from BSE//
-                await bhavStockSrv.AddNewBSEStockesAsync(csvBSE.ToList());
-                Console.WriteLine($"DB Stock Count: {(await bhavStockSrv.GetStocksAsync()).Count()}");
-
+                if (csvBSE.Count() > 0)
+                {
+                    await bhavStockSrv.AddNewBSEStockesAsync(csvBSE.ToList());
+                    Console.WriteLine($"DB Stock Count: {(await bhavStockSrv.GetBSEStockAsync()).Count()}");
+                    await bhavStockSrv.AddLatestBSEStockPrice(csvBSE.ToList(), dtOperation);
+                }
                 //-------FOR NSE Stocks---------//
                 //var csvNSE = DownloadFromNSE();
                 //Console.WriteLine($"NSE Downloaded Stock Count: {csvNSE.Count()}");
@@ -78,14 +72,14 @@ namespace DK.OM.Bhav
             Console.WriteLine("Press any key to close........");
             Console.ReadKey();
         }
-        private static List<BSEDownloadCSVType> DownloadFromBSE()
+        private static List<BSEDownloadCSVType> DownloadFromBSE(DateTime forDate)
         {
             IEnumerable<BSEDownloadCSVType> recordsBSE = new List<BSEDownloadCSVType>();
             //List<BSEDownloadCSVType> records = new List<BSEDownloadCSVType>();
             //Option: Process data from BSE
             try
             {
-                var t = BhavCopy.BhavCopyDownloadFromBSE(new DateTime(2020, 03, 12));
+                var t = BhavCopy.BhavCopyDownloadFromBSE(forDate);
                 t.Wait();
                 var resultBSE = t.Result;
                 //var resultBSE = Task.Run(async () => await BhavCopy.BhavCopyDownloadFromBSE(new DateTime(2020, 03, 12))).Result;
@@ -115,19 +109,18 @@ namespace DK.OM.Bhav
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine(ex.Message);
                 throw;
             }
         }
-        private static List<NSEDownloadCSVType> DownloadFromNSE()
+        private static List<NSEDownloadCSVType> DownloadFromNSE(DateTime forDate)
         {
             //Option1: Processing data downloaded from NSE
             //var resultNSE = await BhavCopy.BhavCopyDownloadFromNSE(new DateTime(2020, 02, 04));
             IEnumerable<NSEDownloadCSVType> recordsNSE = new List<NSEDownloadCSVType>();
             try
             {
-                var t = BhavCopy.BhavCopyDownloadFromNSE(new DateTime(2020, 03, 12));
+                var t = BhavCopy.BhavCopyDownloadFromNSE(forDate);
                 t.Wait();
                 var resultNSE = t.Result;
                 if (resultNSE.Success)

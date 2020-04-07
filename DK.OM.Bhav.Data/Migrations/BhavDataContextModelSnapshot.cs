@@ -16,13 +16,13 @@ namespace DK.OM.Bhav.Data.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.3");
 
-            modelBuilder.Entity("DK.OM.Bhav.Data.BhavDataModels.BhavStockPrices", b =>
+            modelBuilder.Entity("DK.OM.Bhav.Models.BhavBSEStockPrices", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BhavStockId")
+                    b.Property<int>("BhavBSEStockId")
                         .HasColumnType("INTEGER");
 
                     b.Property<double>("Close")
@@ -46,12 +46,15 @@ namespace DK.OM.Bhav.Data.Migrations
                     b.Property<double>("PreClose")
                         .HasColumnType("REAL");
 
+                    b.Property<long>("Turnover")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Prices");
+                    b.ToTable("BSEStockPrices");
                 });
 
-            modelBuilder.Entity("DK.OM.Bhav.Data.BhavDataModels.BhavStocks", b =>
+            modelBuilder.Entity("DK.OM.Bhav.Models.BhavBSEStocks", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,14 +63,8 @@ namespace DK.OM.Bhav.Data.Migrations
                     b.Property<string>("BSECode")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("BhavStockPricesId")
+                    b.Property<int?>("BhavBSEStockPricesId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("NSECode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("StockFullName")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("StockGroup")
                         .HasColumnType("TEXT");
@@ -86,16 +83,16 @@ namespace DK.OM.Bhav.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BhavStockPricesId");
+                    b.HasIndex("BhavBSEStockPricesId");
 
-                    b.ToTable("Stocks");
+                    b.ToTable("BSEStocks");
                 });
 
-            modelBuilder.Entity("DK.OM.Bhav.Data.BhavDataModels.BhavStocks", b =>
+            modelBuilder.Entity("DK.OM.Bhav.Models.BhavBSEStocks", b =>
                 {
-                    b.HasOne("DK.OM.Bhav.Data.BhavDataModels.BhavStockPrices", null)
+                    b.HasOne("DK.OM.Bhav.Models.BhavBSEStockPrices", null)
                         .WithMany("BhavStocks")
-                        .HasForeignKey("BhavStockPricesId");
+                        .HasForeignKey("BhavBSEStockPricesId");
                 });
 #pragma warning restore 612, 618
         }

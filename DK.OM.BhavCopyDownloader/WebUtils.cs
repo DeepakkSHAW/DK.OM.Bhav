@@ -13,14 +13,24 @@ namespace DK.OM.BhavCopyDownloader
     {
         internal static void WebClientDonload(Uri uri, string filename)
         {
-            using (var client = new WebClient())
+            try
             {
-                client.DownloadProgressChanged += Client_DownloadProgressChanged;
-                //TODO: Check how to utilize async method DownloadFileAsync
-                //client.DownloadFileAsync(uri, filename);
-                //await Task.Run(() => client.DownloadFileAsync(uri, filename));
-                client.DownloadFile(uri, filename);
+                using (var client = new WebClient())
+                {
+                    client.DownloadProgressChanged += Client_DownloadProgressChanged;
+                    //TODO: Check how to utilize async method DownloadFileAsync
+                    //client.DownloadFileAsync(uri, filename);
+                    //await Task.Run(() => client.DownloadFileAsync(uri, filename));
+                    client.DownloadFile(uri, filename);
+                }
             }
+            catch (Exception ex)
+            {
+                //Log if any exception and continue
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
         }
         internal static void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {

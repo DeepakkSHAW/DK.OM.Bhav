@@ -25,7 +25,7 @@ namespace DK.OM.BhavCopyDownloader
                 //https://www1.nseindia.com/content/historical/EQUITIES/2020/FEB/cm04FEB2020bhav.csv.zip";
                 var uri = new Uri(@"https://" + $"www1.nseindia.com/content/historical/EQUITIES/{year}/{month}/{filename}");
                 //await WebUtils.WebClientDonload(uri, filename);
-                //await Task.Run(() => WebUtils.WebClientDonload(uri, filename));
+                await Task.Run(() => WebUtils.WebClientDonload(uri, filename));
                 return (true, filename, null);
             }
             catch (Exception ex)
@@ -49,7 +49,7 @@ namespace DK.OM.BhavCopyDownloader
                 //https://www.bseindia.com/download/BhavCopy/Equity/EQ030420_CSV.ZIP
                 var uri = new Uri(@"https://" + $"www.bseindia.com/download/BhavCopy/Equity/{filename}");
                 ////await WebUtils.WebClientDonload(uri, filename);
-                //await Task.Run(() => WebUtils.WebClientDonload(uri, filename));
+                await Task.Run(() => WebUtils.WebClientDonload(uri, filename));
                 return (true, filename, null);
             }
             catch (Exception ex)
