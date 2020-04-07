@@ -89,7 +89,7 @@ namespace DK.OM.Bhav.Data
                 }
                 //Ready to Bulk Insert of new stocks
                 var result = await _ctx.SaveChangesAsync();
-                System.Diagnostics.Debug.WriteLine($"Number of new stocks Added: {bseStocks.Count()} After DB Operation affected rows{result}");
+                System.Diagnostics.Debug.WriteLine($"Number of new stocks Added: {bseStocks.Count()} After DB Operation affected rows:{result}");
             }
             catch (Exception ex)
             {

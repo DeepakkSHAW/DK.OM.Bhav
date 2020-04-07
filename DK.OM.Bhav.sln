@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DK.OM.Bhav.Data", "DK.OM.Bh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DK.OM.Bhav.Models", "DK.OM.Bhav.Models\DK.OM.Bhav.Models.csproj", "{0BE683A1-C8BD-4FE2-A9FE-16901F258BF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DK.OM.Bhav.Utilities", "DK.OM.Bhav.Utilities\DK.OM.Bhav.Utilities.csproj", "{A23750CB-3C2C-4FFC-AE7A-0D710BB1FBE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DK.OM.Bhav.Utilities", "DK.OM.Bhav.Utilities\DK.OM.Bhav.Utilities.csproj", "{A23750CB-3C2C-4FFC-AE7A-0D710BB1FBE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DK.OM.Bhav.SyncDoubleM", "DK.OM.Bhav.SyncDoubleM\DK.OM.Bhav.SyncDoubleM.csproj", "{ED5A13B5-D3C0-44A9-807C-4A9F2BF2D55B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{A23750CB-3C2C-4FFC-AE7A-0D710BB1FBE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A23750CB-3C2C-4FFC-AE7A-0D710BB1FBE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A23750CB-3C2C-4FFC-AE7A-0D710BB1FBE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED5A13B5-D3C0-44A9-807C-4A9F2BF2D55B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED5A13B5-D3C0-44A9-807C-4A9F2BF2D55B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED5A13B5-D3C0-44A9-807C-4A9F2BF2D55B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED5A13B5-D3C0-44A9-807C-4A9F2BF2D55B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

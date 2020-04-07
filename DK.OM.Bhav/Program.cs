@@ -27,7 +27,7 @@ namespace DK.OM.Bhav
         static async Task Main(string[] args)
         {
             Console.WriteLine("Bhav Copy Download");
-            DateTime dtOperation = new DateTime(2020, 04, 3);
+            DateTime dtOperation = new DateTime(2020, 04, 7);
             try
             {
                 BhavStockRepo bhavStockSrv = new BhavStockRepo();
@@ -43,7 +43,7 @@ namespace DK.OM.Bhav
                     .Build();
 
                 Console.WriteLine($" Version { config["Version"] } !");
-                string dbConn = config.GetSection("MySettings").GetSection("DbConnection").Value;
+                string dbConn = config.GetSection("ConnectionStrings").GetSection("DefaultConnection").Value;
                 //string dbConn1 = config.GetValue<string>("DBSetting:ConnectionString");
                 //--------------------------------------------//
 
